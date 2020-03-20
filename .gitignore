@@ -14,8 +14,8 @@ doc
 .project
 
 # Project specific files and folders
-*.mapfg
-*.mapgr
+#*.mapfg
+#*.mapgr
 *.path
 *.tgz
 /.metadata/
