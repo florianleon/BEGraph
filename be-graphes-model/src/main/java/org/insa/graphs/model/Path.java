@@ -210,11 +210,16 @@ public class Path {
      * 
      * @return Total length of the path (in meters).
      * 
-     * @deprecated Need to be implemented.
+     * 
      */
+     //je suppose qu'on parcours la liste des arcs et on ajoute la longueur à une variable
     public float getLength() {
         // TODO:
-        return 0;
+    	float length = 0;
+    	for (Arc arc : this.arcs) {
+    		length += arc.getLength();
+    	}
+        return length;
     }
 
     /**
