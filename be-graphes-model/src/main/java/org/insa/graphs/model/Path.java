@@ -214,7 +214,6 @@ public class Path {
      */
      //je suppose qu'on parcours la liste des arcs et on ajoute la longueur à une variable
     public float getLength() {
-        // TODO:
     	float length = 0;
     	for (Arc arc : this.arcs) {
     		length += arc.getLength();
@@ -232,7 +231,6 @@ public class Path {
      * 
      */
     public double getTravelTime(double speed) {
-        // TODO:
     	// vitesse en m/s
     	double speed_m_per_s = speed / 3.6;
     	double distance = (double) this.getLength();
