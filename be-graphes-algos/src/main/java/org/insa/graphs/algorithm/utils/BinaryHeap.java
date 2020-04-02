@@ -139,20 +139,34 @@ public class BinaryHeap<E extends Comparable<E>> implements PriorityQueue<E> {
 
     @Override
     public void remove(E x) throws ElementNotFoundException {
-        // TODO:
     	if (this.isEmpty()) throw new ElementNotFoundException(x);
+    	int key = -1; //l'initialiser à zero pourrais creer des erreurs
     	
-    	int key = array.indexOf(x);
-    	if (key != -1) {
-            this.array.remove(x);
-            this.currentSize--;
-            this.percolateDown(key);
-    	} else {
+    	try {
+    		//on verifie si l'element est dans la liste
+    		//etonnemment indexOf()ne fonctionne pas et ne passe pas tous les tests
+    		//c'est pour ça qu'on le fait manuellement
+    		for(int i=0; i<this.size();i++) {
+    			if(this.array.get(i).equals(x)) {
+    				key = i;
+    			}
+    		}
+    	} catch(EmptyPriorityQueueException e) {
+    		key = -1;
+    	}
+    	if (key < 0) {
     		throw new ElementNotFoundException(x);
-        }
+    	}
+    	//je me suis legerement inspiré de la fonction deleteMin()
+    	E lastItem = this.array.get(--this.currentSize);
+    	this.arraySet(key, lastItem);
+		this.percolateUp(key);
+		this.percolateDown(key);
         
-
     }
+    	
+
+    
 
     @Override
     public E findMin() throws EmptyPriorityQueueException {
