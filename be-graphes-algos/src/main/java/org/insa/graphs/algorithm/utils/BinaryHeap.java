@@ -2,6 +2,8 @@ package org.insa.graphs.algorithm.utils;
 
 import java.util.ArrayList;
 
+import org.insa.graphs.model.Arc;
+
 /**
  * Implements a binary heap containing elements of type E.
  *
@@ -138,6 +140,18 @@ public class BinaryHeap<E extends Comparable<E>> implements PriorityQueue<E> {
     @Override
     public void remove(E x) throws ElementNotFoundException {
         // TODO:
+    	if (this.isEmpty()) throw new ElementNotFoundException(x);
+    	
+    	int key = array.indexOf(x);
+    	if (key != -1) {
+            this.array.remove(x);
+            this.currentSize--;
+            this.percolateDown(key);
+    	} else {
+    		throw new ElementNotFoundException(x);
+        }
+        
+
     }
 
     @Override
