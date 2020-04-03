@@ -10,7 +10,7 @@ import org.insa.graphs.model.Node;
  * @author florianleon
  *
  */
-public class Label {
+public class Label implements Comparable<Label>{
 	//sommet associé à ce label (sommet ou numéro de sommet)
 	private Node currentNode;
 	//booléen, vrai lorsque le coût min de ce sommet est définitivement connu par l'algorithme
@@ -90,7 +90,10 @@ public class Label {
     }
 
     
-    //j'ai l'impression d'avoir oublié un truc…
+    @Override
+    public int compareTo(Label label) {
+        return Double.compare(this.cost, label.getCost()) ;
+    }
     
 	
 	
