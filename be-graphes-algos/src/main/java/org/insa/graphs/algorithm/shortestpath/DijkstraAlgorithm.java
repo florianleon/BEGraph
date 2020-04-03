@@ -35,8 +35,6 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         // Notify observers about the first event (origin processed).
         notifyOriginProcessed(data.getOrigin());
 
-        // Initialize array of predecessors.
-        Arc[] predecessorArcs = new Arc[nbNodes];
         
         // Actual algorithm, we will assume the graph does not contain negative
         // cycle...
