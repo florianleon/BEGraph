@@ -63,10 +63,16 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         Label x = null;
         
         while (!labels[destination.getId()].isMarked() && !bheap.isEmpty()) {
-        	compteur++;
+        	
         	x = bheap.deleteMin();
         	x.setMarked();
         	notifyNodeMarked(x.getNode());
+        	/*
+	    	 * Test pour les couts des labels
+	    	 */
+	    	//System.out.println("cout: " + x.getCost());
+        	//System.out.println("Valide?: " + bheap.isValid(compteur));
+        	compteur++;
         	
         	List<Arc> successorsList = x.getNode().getSuccessors();
         	
@@ -87,6 +93,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         		    	arcFather = succ;
         		    	formerCost = y.getCost();
         		    	newCost = x.getCost() + data.getCost(arcFather);
+        		    	
         		    	
         		    	if(newCost < formerCost) {
         		    		/*
@@ -125,11 +132,11 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
             Collections.reverse(arcs);
             // Create the final solution.
             solution = new ShortestPathSolution(data, Status.OPTIMAL, new Path(graph, arcs));
-            
         }
         
         
-     
+      //Afficher le nombre d'itération
+        System.out.println("compteur : " + compteur);
         
         return solution;
     }

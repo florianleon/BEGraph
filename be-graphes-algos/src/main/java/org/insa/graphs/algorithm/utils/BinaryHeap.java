@@ -2,8 +2,6 @@ package org.insa.graphs.algorithm.utils;
 
 import java.util.ArrayList;
 
-import org.insa.graphs.model.Arc;
-
 /**
  * Implements a binary heap containing elements of type E.
  *
@@ -228,6 +226,32 @@ public class BinaryHeap<E extends Comparable<E>> implements PriorityQueue<E> {
     @Override
     public String toString() {
         return BinaryHeapFormatter.toStringTree(this, 8);
+    }
+    /**
+     * Check is the Binary Heap is Valid (using recursion)
+     * @param index
+     * @return if the heap is valid
+     */
+    public boolean isValid(int index) {
+    	if (this.currentSize <= 1) {
+    		return true;
+    	}
+    	boolean estValide = true;
+    	E current = this.array.get(0);
+        int left = indexLeft(index);
+        int right = left + 1; //logiquement l'element de droite se trouve dans la case d'aprés
+        //si left > this.currentSize on est plus dans le tas
+        if (left < this.currentSize) {
+            if (current.compareTo(this.array.get(left)) < 0) {
+            	estValide = this.isValid(left);
+            }
+        }
+        if (right < this.currentSize) {
+            if (current.compareTo(this.array.get(right)) < 0) {
+                estValide = this.isValid(right);
+            }
+        }
+        return estValide;
     }
 
 }
