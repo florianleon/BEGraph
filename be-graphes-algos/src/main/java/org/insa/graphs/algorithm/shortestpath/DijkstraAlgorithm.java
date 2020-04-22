@@ -58,7 +58,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         //on insere origin dans le tas
         bheap.insert(labels[origin.getId()]);
         
-        //to be continued…
+        //pas sur que j'ai besoin d'un compteur finalement
         int compteur = 0;
         Label x = null;
         
@@ -108,15 +108,22 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	}
         }
         
+        // Destination has no predecessor, the solution is infeasible...
         if(destinationLabel.isMarked() == false) {
         	solution = new ShortestPathSolution(data, Status.INFEASIBLE);
         } else {
+        	// The destination has been found, notify the observers.
+            notifyDestinationReached(data.getDestination());
+            
+            // Create the path from the array of predecessors...
         	ArrayList<Arc> arcs = new ArrayList<Arc>();
         	while(!x.equals(originLabel)) {
         		arcs.add(x.getArcFather());
         		x = labels[x.getArcFather().getOrigin().getId()];
         	}
+        	// Reverse the path...
             Collections.reverse(arcs);
+            // Create the final solution.
             solution = new ShortestPathSolution(data, Status.OPTIMAL, new Path(graph, arcs));
             
         }

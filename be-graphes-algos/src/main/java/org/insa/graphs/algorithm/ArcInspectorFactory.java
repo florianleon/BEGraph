@@ -24,7 +24,7 @@ public class ArcInspectorFactory {
         filters.add(new ArcInspector() {
             @Override
             public boolean isAllowed(Arc arc) {
-                return true;
+            	return true;
             }
 
             @Override
