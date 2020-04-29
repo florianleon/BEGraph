@@ -105,7 +105,8 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         		    		} catch(ElementNotFoundException e) {
         		    			
         		    		}
-        		    		y.setCost(x.getCost() + arcFather.getLength());
+        		    		//y.setCost(x.getCost() + arcFather.getLength());
+        		    		y.setCost(x.getCost() + data.getCost(succ));
         		    		y.setArcFather(arcFather);;
         		    		bheap.insert(y);
         		    	}
