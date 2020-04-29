@@ -3,22 +3,34 @@
  */
 package org.insa.graphs.algorithm.utils;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.List;
+import java.util.Random;
 
 import org.insa.graphs.algorithm.ArcInspector;
 import org.insa.graphs.algorithm.ArcInspectorFactory;
+import org.insa.graphs.algorithm.shortestpath.DijkstraAlgorithm;
+import org.insa.graphs.algorithm.shortestpath.ShortestPathData;
+import org.insa.graphs.algorithm.shortestpath.ShortestPathSolution;
 import org.insa.graphs.model.Graph;
+import org.insa.graphs.model.Node;
 import org.insa.graphs.model.io.BinaryGraphReader;
 import org.insa.graphs.model.io.GraphReader;
+import org.junit.Test;
 
 
 /**
  * @author florianleon
  *
  */
+@SuppressWarnings("unused")
 public class DjikstraTest {
 	/**
      * 
@@ -26,17 +38,17 @@ public class DjikstraTest {
 	 * Pour l’obtenir, vous pouvez invoquer la méthode getAllFilters() de ArcInspectorFactory et 
 	 * prendre le premier de la liste puis le troisième.
      */    
-    private ArcInspector arcFilterLength, arcFilterTime;
-    private void ArcInspectorInit() {
-    	arcFilterLength = ArcInspectorFactory.getAllFilters().get(0);
-    	arcFilterTime = ArcInspectorFactory.getAllFilters().get(2);
-    }
+
+    private ArcInspector[] arcInspectors = {
+            ArcInspectorFactory.getAllFilters().get(0), //length
+            ArcInspectorFactory.getAllFilters().get(2), //time
+    };
     
    /**
     * On va tester l'algo sur 3 cartes : 
     * carré, insa et reunion
     */
-    private Graph carre;
+	private Graph carre;
     private Graph insa;
     private Graph reunion;
     //je sais pas comment les créer pour l'instant
@@ -49,14 +61,113 @@ public class DjikstraTest {
     }
     
 	private void initGraphs() throws IOException {
-        carre = readGraph("/Users/florianleon/Desktop/carre.mapgr");
-        insa = readGraph("/Users/florianleon/Desktop/insa.mapgr");
-        reunion = readGraph("/Users/florianleon/Desktop/reunion.mapgr");
+        this.carre = readGraph("/Users/florianleon/Desktop/carre.mapgr");
+        this.insa = readGraph("/Users/florianleon/Desktop/insa.mapgr");
+        this.reunion = readGraph("/Users/florianleon/Desktop/reunion.mapgr");
     }
     
 
     
     //ShortestPathData(Graph graph, Node origin, Node destination, ArcInspector arcInspector)
+	
+	
+	@Test
+    public void test() {
+        try {
+			initGraphs();
+		
+	        List<Node> nodesCarre = carre.getNodes();
+	        Node origCarre;
+	        Node destCarre;
+	        List<Node> nodesInsa = insa.getNodes();
+	        Node origInsa;
+	        Node destInsa;
+	        List<Node> nodesReunion = reunion.getNodes();
+	        Node origReunion;
+	        Node destReunion;
+	        //pour pouvoir prendre un node au hasard la liste (ça marche pas sans…)
+	        Random atRandom = new Random();
+	        
+	        /**
+	    	 * On teste des chemins au hasard
+	    	 */
+	        origCarre = nodesCarre.get(atRandom.nextInt(nodesCarre.size()));
+	        origInsa = nodesInsa.get(atRandom.nextInt(nodesCarre.size()));
+	        origReunion = nodesReunion.get(atRandom.nextInt(nodesCarre.size()));
+	        
+	        //c'est rare mais ça peut arriver mais c'est "rare" que orig = dest
+	        //alors on utilise un do while
+	        do {
+	        	destCarre = nodesCarre.get(atRandom.nextInt(nodesCarre.size()));
+	            destInsa = nodesInsa.get(atRandom.nextInt(nodesCarre.size()));
+	            destReunion = nodesReunion.get(atRandom.nextInt(nodesCarre.size()));
+	        } while (origCarre == destCarre || origInsa == destInsa || origReunion == destReunion);
+	        
+	        for (ArcInspector arcInspector : arcInspectors) {
+	        	//carre
+	            ShortestPathData dataCarre = new ShortestPathData(carre, origCarre, destCarre, arcInspector);
+	            ShortestPathSolution solCarre = new DijkstraAlgorithm(dataCarre).doRun();
+	            //on pourrait peut etre le comparer à Bellmann)Ford aussi je pense
+	            if (solCarre.isFeasible()) {
+	            	assertTrue(solCarre.getPath().isValid());
+	            }
+	            
+	            //insa
+	            ShortestPathData dataInsa = new ShortestPathData(insa, origInsa, destInsa, arcInspector);
+	            ShortestPathSolution solInsa = new DijkstraAlgorithm(dataInsa).doRun();
+	            //on pourrait peut etre le comparer à Bellmann)Ford aussi je pense
+	            if (solInsa.isFeasible()) {
+	            	assertTrue(solInsa.getPath().isValid());
+	            }
+	            
+	            //reunion
+	            
+	            ShortestPathData dataReunion = new ShortestPathData(reunion, origReunion, destReunion, arcInspector);
+	            ShortestPathSolution solReunion = new DijkstraAlgorithm(dataReunion).doRun();
+	            //on pourrait peut etre le comparer à Bellmann)Ford aussi je pense
+	            if (solReunion.isFeasible()) {
+	            	assertTrue(solReunion.getPath().isValid());
+	            }
+	                
+	        }
+	        
+	        
+	        /**
+	    	 * On teste un chemin de longueur 0
+	    	 */
+	        origCarre = nodesCarre.get(atRandom.nextInt(nodesCarre.size()));
+            destCarre = origCarre;
+            for (ArcInspector arcInspector : arcInspectors) {
+                ShortestPathData data = new ShortestPathData(carre, origCarre, destCarre, arcInspector);
+                ShortestPathSolution sol = new DijkstraAlgorithm(data).doRun();
+                if (sol.isFeasible())
+                    assertTrue(sol.getPath().isValid());
+            }
+            
+            /**
+	    	 * On teste un chemin inexistant
+	    	 */
+	        origCarre = null;
+            destCarre = origCarre;
+            for (ArcInspector arcInspector : arcInspectors) {
+                ShortestPathData data = new ShortestPathData(carre, origCarre, destCarre, arcInspector);
+                ShortestPathSolution sol = new DijkstraAlgorithm(data).doRun();
+                if (sol.isFeasible())
+                    assertFalse(sol.getPath().isValid());
+            }
+  
+        } catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        
+        
+      
+        
+        
+    }
+	
 	
 	
 	
