@@ -15,6 +15,7 @@ import java.util.Random;
 
 import org.insa.graphs.algorithm.ArcInspector;
 import org.insa.graphs.algorithm.ArcInspectorFactory;
+import org.insa.graphs.algorithm.shortestpath.BellmanFordAlgorithm;
 import org.insa.graphs.algorithm.shortestpath.DijkstraAlgorithm;
 import org.insa.graphs.algorithm.shortestpath.ShortestPathData;
 import org.insa.graphs.algorithm.shortestpath.ShortestPathSolution;
@@ -139,20 +140,21 @@ public class DjikstraTest {
             for (ArcInspector arcInspector : arcInspectors) {
                 ShortestPathData data = new ShortestPathData(carre, origCarre, destCarre, arcInspector);
                 ShortestPathSolution sol = new DijkstraAlgorithm(data).doRun();
-                if (sol.isFeasible())
-                    assertTrue(sol.getPath().isValid());
-            }
+                if (sol.isFeasible()) {
+                	assertTrue(sol.getPath().isValid());
+                }
             
             /**
 	    	 * On teste un chemin inexistant
 	    	 */
 	        origCarre = null;
             destCarre = origCarre;
-            for (ArcInspector arcInspector : arcInspectors) {
-                ShortestPathData data = new ShortestPathData(carre, origCarre, destCarre, arcInspector);
-                ShortestPathSolution sol = new DijkstraAlgorithm(data).doRun();
-                if (sol.isFeasible())
-                    assertFalse(sol.getPath().isValid());
+            for (ArcInspector arcInspector2 : arcInspectors) {
+                ShortestPathData data2 = new ShortestPathData(carre, origCarre, destCarre, arcInspector);
+                ShortestPathSolution sol2 = new DijkstraAlgorithm(data).doRun();
+                if (sol2.isFeasible()) {
+                	assertTrue(sol2.getPath().isValid());
+                }
             }
   
         } catch (IOException e) {
@@ -162,6 +164,142 @@ public class DjikstraTest {
   
         
     }
+	
+	
+	@Test
+    public void testBellman() {
+        try {
+			initGraphs();
+		
+	        List<Node> nodesCarre = carre.getNodes();
+	        Node origCarre;
+	        Node destCarre;
+	        List<Node> nodesInsa = insa.getNodes();
+	        Node origInsa;
+	        Node destInsa;
+	        List<Node> nodesReunion = reunion.getNodes();
+	        Node origReunion;
+	        Node destReunion;
+	        //pour pouvoir prendre un node au hasard la liste (ça marche pas sans…)
+	        Random atRandom = new Random();
+	        
+	        /**
+	    	 * On teste des chemins au hasard
+	    	 */
+	        origCarre = nodesCarre.get(atRandom.nextInt(nodesCarre.size()));
+	        origInsa = nodesInsa.get(atRandom.nextInt(nodesCarre.size()));
+	        origReunion = nodesReunion.get(atRandom.nextInt(nodesCarre.size()));
+	        
+	        //c'est rare mais ça peut arriver mais c'est "rare" que orig = dest
+	        //alors on utilise un do while
+	        do {
+	        	destCarre = nodesCarre.get(atRandom.nextInt(nodesCarre.size()));
+	            destInsa = nodesInsa.get(atRandom.nextInt(nodesCarre.size()));
+	            destReunion = nodesReunion.get(atRandom.nextInt(nodesCarre.size()));
+	        } while (origCarre == destCarre || origInsa == destInsa || origReunion == destReunion);
+	        
+	        for (ArcInspector arcInspector : arcInspectors) {
+	        	//carre
+	            ShortestPathData dataCarre = new ShortestPathData(carre, origCarre, destCarre, arcInspector);
+	            ShortestPathSolution solCarre = new DijkstraAlgorithm(dataCarre).doRun();
+	            ShortestPathSolution solCarreBellman = new BellmanFordAlgorithm(dataCarre).doRun();
+	            if (solCarre == solCarreBellman) {
+	            	assertTrue(solCarre.getPath().isValid());
+	            }
+	            
+	            //insa
+	            ShortestPathData dataInsa = new ShortestPathData(insa, origInsa, destInsa, arcInspector);
+	            ShortestPathSolution solInsa = new DijkstraAlgorithm(dataInsa).doRun();
+	            ShortestPathSolution solInsaBellman = new BellmanFordAlgorithm(dataInsa).doRun();
+	            if (solInsa == solInsaBellman) {
+	            	assertTrue(solInsa.getPath().isValid());
+	            }
+	            
+	            //reunion
+	            
+	            ShortestPathData dataReunion = new ShortestPathData(reunion, origReunion, destReunion, arcInspector);
+	            ShortestPathSolution solReunion = new DijkstraAlgorithm(dataReunion).doRun();
+	            ShortestPathSolution solReunionBellman = new BellmanFordAlgorithm(dataReunion).doRun();
+	            if (solReunion == solReunionBellman) {
+	            	assertTrue(solReunion.getPath().isValid());
+	            }
+	                
+	        }
+
+        } catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+	}
+	
+	
+	@Test
+    public void testPath() {
+        try {
+			initGraphs();
+		
+	        List<Node> nodesCarre = carre.getNodes();
+	        Node origCarre;
+	        Node destCarre;
+	        List<Node> nodesInsa = insa.getNodes();
+	        Node origInsa;
+	        Node destInsa;
+	        List<Node> nodesReunion = reunion.getNodes();
+	        Node origReunion;
+	        Node destReunion;
+	        //pour pouvoir prendre un node au hasard la liste (ça marche pas sans…)
+	        Random atRandom = new Random();
+	        
+	        /**
+	    	 * On teste des chemins au hasard
+	    	 */
+	        origCarre = nodesCarre.get(atRandom.nextInt(nodesCarre.size()));
+	        origInsa = nodesInsa.get(atRandom.nextInt(nodesCarre.size()));
+	        origReunion = nodesReunion.get(atRandom.nextInt(nodesCarre.size()));
+	        
+	        //c'est rare mais ça peut arriver mais c'est "rare" que orig = dest
+	        //alors on utilise un do while
+	        do {
+	        	destCarre = nodesCarre.get(atRandom.nextInt(nodesCarre.size()));
+	            destInsa = nodesInsa.get(atRandom.nextInt(nodesCarre.size()));
+	            destReunion = nodesReunion.get(atRandom.nextInt(nodesCarre.size()));
+	        } while (origCarre == destCarre || origInsa == destInsa || origReunion == destReunion);
+	        
+	        for (ArcInspector arcInspector : arcInspectors) {
+	        	//carre
+	            ShortestPathData dataCarre = new ShortestPathData(carre, origCarre, destCarre, arcInspector);
+	            ShortestPathSolution solCarre = new DijkstraAlgorithm(dataCarre).doRun();
+	            ShortestPathSolution solCarreBellman = new BellmanFordAlgorithm(dataCarre).doRun();
+	            if (solCarre == solCarreBellman) {
+	            	assertTrue(solCarre.getPath().isValid());
+	            }
+	            
+	            //insa
+	            ShortestPathData dataInsa = new ShortestPathData(insa, origInsa, destInsa, arcInspector);
+	            ShortestPathSolution solInsa = new DijkstraAlgorithm(dataInsa).doRun();
+	            ShortestPathSolution solInsaBellman = new BellmanFordAlgorithm(dataInsa).doRun();
+	            if (solInsa == solInsaBellman) {
+	            	assertTrue(solInsa.getPath().isValid());
+	            }
+	            
+	            //reunion
+	            
+	            ShortestPathData dataReunion = new ShortestPathData(reunion, origReunion, destReunion, arcInspector);
+	            ShortestPathSolution solReunion = new DijkstraAlgorithm(dataReunion).doRun();
+	            ShortestPathSolution solReunionBellman = new BellmanFordAlgorithm(dataReunion).doRun();
+	            if (solReunion == solReunionBellman) {
+	            	assertTrue(solReunion.getPath().isValid());
+	            }
+	                
+	        }
+
+        } catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+	}
 	
 	
 	
