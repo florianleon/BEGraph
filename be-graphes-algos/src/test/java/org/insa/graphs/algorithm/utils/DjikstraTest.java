@@ -3,7 +3,6 @@
  */
 package org.insa.graphs.algorithm.utils;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 
@@ -160,11 +159,7 @@ public class DjikstraTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        
-        
-        
-      
-        
+  
         
     }
 	
