@@ -156,14 +156,17 @@ public class DjikstraTest {
                 	assertTrue(sol2.getPath().isValid());
                 }
             }
+           }
   
         } catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+        
   
         
     }
+	
 	
 	
 	@Test
