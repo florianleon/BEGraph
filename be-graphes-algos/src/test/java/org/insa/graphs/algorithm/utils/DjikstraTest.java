@@ -21,6 +21,7 @@ import org.insa.graphs.algorithm.shortestpath.ShortestPathData;
 import org.insa.graphs.algorithm.shortestpath.ShortestPathSolution;
 import org.insa.graphs.model.Graph;
 import org.insa.graphs.model.Node;
+import org.insa.graphs.model.Path;
 import org.insa.graphs.model.io.BinaryGraphReader;
 import org.insa.graphs.model.io.GraphReader;
 import org.junit.Test;
@@ -273,16 +274,16 @@ public class DjikstraTest {
 	        	//carre
 	            ShortestPathData dataCarre = new ShortestPathData(carre, origCarre, destCarre, arcInspector);
 	            ShortestPathSolution solCarre = new DijkstraAlgorithm(dataCarre).doRun();
-	            ShortestPathSolution solCarreBellman = new BellmanFordAlgorithm(dataCarre).doRun();
-	            if (solCarre == solCarreBellman) {
+	            Path solCarrePath = Path.createShortestPathFromNodes(carre, nodesCarre);
+	            if (solCarre.getPath() == solCarrePath) {
 	            	assertTrue(solCarre.getPath().isValid());
 	            }
 	            
 	            //insa
 	            ShortestPathData dataInsa = new ShortestPathData(insa, origInsa, destInsa, arcInspector);
 	            ShortestPathSolution solInsa = new DijkstraAlgorithm(dataInsa).doRun();
-	            ShortestPathSolution solInsaBellman = new BellmanFordAlgorithm(dataInsa).doRun();
-	            if (solInsa == solInsaBellman) {
+	            Path solInsaPath = Path.createShortestPathFromNodes(insa, nodesInsa);
+	            if (solInsa.getPath() == solInsaPath) {
 	            	assertTrue(solInsa.getPath().isValid());
 	            }
 	            
@@ -290,8 +291,8 @@ public class DjikstraTest {
 	            
 	            ShortestPathData dataReunion = new ShortestPathData(reunion, origReunion, destReunion, arcInspector);
 	            ShortestPathSolution solReunion = new DijkstraAlgorithm(dataReunion).doRun();
-	            ShortestPathSolution solReunionBellman = new BellmanFordAlgorithm(dataReunion).doRun();
-	            if (solReunion == solReunionBellman) {
+	            Path solReunionPath = Path.createShortestPathFromNodes(reunion, nodesInsa);
+	            if (solReunion.getPath() == solReunionPath) {
 	            	assertTrue(solReunion.getPath().isValid());
 	            }
 	                
