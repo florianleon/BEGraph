@@ -30,8 +30,9 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         // Initialize array of distances.
         double[] distances = new double[nbNodes];
         Arrays.fill(distances, Double.POSITIVE_INFINITY);
+        //System.out.println(data.getOrigin().getId());
         distances[data.getOrigin().getId()] = 0;
-
+        
         // Notify observers about the first event (origin processed).
         notifyOriginProcessed(data.getOrigin());
 

@@ -62,9 +62,9 @@ public class DjikstraTest {
     }
     
 	private void initGraphs() throws IOException {
-        this.carre = readGraph("/Users/florianleon/Desktop/carre.mapgr");
-        this.insa = readGraph("/Users/florianleon/Desktop/insa.mapgr");
-        this.reunion = readGraph("/Users/florianleon/Desktop/reunion.mapgr");
+        this.carre = readGraph("/Users/florianleon/Desktop/Cartes/carre.mapgr");
+        this.insa = readGraph("/Users/florianleon/Desktop/Cartes/insa.mapgr");
+        this.reunion = readGraph("/Users/florianleon/Desktop/Cartes/reunion.mapgr");
     }
     
 
@@ -73,7 +73,7 @@ public class DjikstraTest {
 	
 	
 	@Test
-    public void test() {
+    public void testRandom() {
         try {
 			initGraphs();
 		
@@ -136,27 +136,15 @@ public class DjikstraTest {
 	        /**
 	    	 * On teste un chemin de longueur 0
 	    	 */
-	        origCarre = nodesCarre.get(atRandom.nextInt(nodesCarre.size()));
-            destCarre = origCarre;
-            for (ArcInspector arcInspector : arcInspectors) {
-                ShortestPathData data = new ShortestPathData(carre, origCarre, destCarre, arcInspector);
-                ShortestPathSolution sol = new DijkstraAlgorithm(data).doRun();
-                if (sol.isFeasible()) {
-                	assertTrue(sol.getPath().isValid());
-                }
-            
-            /**
-	    	 * On teste un chemin inexistant
-	    	 */
-	        origCarre = null;
-            destCarre = origCarre;
+	        origInsa = nodesInsa.get(atRandom.nextInt(nodesInsa.size()));
+            destInsa = origInsa;
             for (ArcInspector arcInspector2 : arcInspectors) {
-                ShortestPathData data2 = new ShortestPathData(carre, origCarre, destCarre, arcInspector);
-                ShortestPathSolution sol2 = new DijkstraAlgorithm(data).doRun();
+                ShortestPathData data2 = new ShortestPathData(insa, origInsa, destInsa, arcInspector2);
+                ShortestPathSolution sol2 = new DijkstraAlgorithm(data2).doRun();
                 if (sol2.isFeasible()) {
                 	assertTrue(sol2.getPath().isValid());
                 }
-            }
+            
            }
   
         } catch (IOException e) {
@@ -274,7 +262,9 @@ public class DjikstraTest {
 	        	//carre
 	            ShortestPathData dataCarre = new ShortestPathData(carre, origCarre, destCarre, arcInspector);
 	            ShortestPathSolution solCarre = new DijkstraAlgorithm(dataCarre).doRun();
-	            Path solCarrePath = Path.createShortestPathFromNodes(carre, nodesCarre);
+	            Path path = new Path(carre, origCarre);
+	            Path carrePath = new Path(carre, path.getArcs());
+	            Path solCarrePath = carrePath.createShortestPathFromNodes(carre, nodesCarre);
 	            if (solCarre.getPath() == solCarrePath) {
 	            	assertTrue(solCarre.getPath().isValid());
 	            }
