@@ -18,15 +18,30 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
     public DijkstraAlgorithm(ShortestPathData data) {
         super(data);
     }
-
+    
+    
+    
     @Override
-	public ShortestPathSolution doRun() {
+    public ShortestPathSolution doRun() {
         final ShortestPathData data = getInputData();
-        ShortestPathSolution solution = null;
-        // TODO:
         Graph graph = data.getGraph();
         final int nbNodes = graph.size();
+        Label[] labels = new Label[nbNodes];
+        List<Node> nodes = graph.getNodes();
+        //l'initialisation du cours est faite dans la classe label
+        for (int i = 0; i < nbNodes; i++) {
+            labels[i] = new Label(nodes.get(i));
+        }
         
+        return djikstraRun(labels, data, graph);
+        
+    }
+
+    
+	protected ShortestPathSolution djikstraRun(Label[] labels, ShortestPathData data, Graph graph) {
+        ShortestPathSolution solution = null;
+        
+        final int nbNodes = graph.size();
         // Initialize array of distances.
         double[] distances = new double[nbNodes];
         Arrays.fill(distances, Double.POSITIVE_INFINITY);
@@ -36,15 +51,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         // Notify observers about the first event (origin processed).
         notifyOriginProcessed(data.getOrigin());
 
-        
-        // Actual algorithm, we will assume the graph does not contain negative
-        // cycle...
-        Label[] labels = new Label[nbNodes];
-        List<Node> nodes = graph.getNodes();
-        //l'initialisation du cours est faite dans la classe label
-        for (int i = 0; i < nbNodes; i++) {
-            labels[i] = new Label(nodes.get(i));
-        }
+ 
         //pour commencer l'algo il faut mettre le cout de notre 
         //sommet de depart à 0
         final Node origin = data.getOrigin();
