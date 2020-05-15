@@ -67,7 +67,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         bheap.insert(labels[origin.getId()]);
         
         //pas sur que j'ai besoin d'un compteur finalement
-        int compteur = 0;
+        //int compteur = 0;
         Label x = null;
         
         while (!labels[destination.getId()].isMarked() && !bheap.isEmpty()) {
@@ -80,7 +80,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 	    	 */
 	    	//System.out.println("cout: " + x.getCost());
         	//System.out.println("Valide?: " + bheap.isValid(compteur));
-        	compteur++;
+        	//compteur++;
         	
         	List<Arc> successorsList = x.getNode().getSuccessors();
         	
@@ -145,7 +145,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         
         
       //Afficher le nombre d'itération
-        System.out.println("compteur : " + compteur);
+        //System.out.println("compteur : " + compteur);
         
         return solution;
     }
