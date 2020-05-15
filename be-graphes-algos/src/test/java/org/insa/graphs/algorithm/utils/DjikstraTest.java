@@ -264,7 +264,7 @@ public class DjikstraTest {
 	            ShortestPathSolution solCarre = new DijkstraAlgorithm(dataCarre).doRun();
 	            Path path = new Path(carre, origCarre);
 	            Path carrePath = new Path(carre, path.getArcs());
-	            Path solCarrePath = carrePath.createShortestPathFromNodes(carre, nodesCarre);
+	            Path solCarrePath = Path.createShortestPathFromNodes(carre, nodesCarre);
 	            if (solCarre.getPath() == solCarrePath) {
 	            	assertTrue(solCarre.getPath().isValid());
 	            }
@@ -294,24 +294,5 @@ public class DjikstraTest {
 		}
         
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 
 }
