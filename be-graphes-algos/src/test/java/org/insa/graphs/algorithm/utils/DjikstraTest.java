@@ -11,6 +11,7 @@ import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -21,6 +22,7 @@ import org.insa.graphs.algorithm.shortestpath.BellmanFordAlgorithm;
 import org.insa.graphs.algorithm.shortestpath.DijkstraAlgorithm;
 import org.insa.graphs.algorithm.shortestpath.ShortestPathData;
 import org.insa.graphs.algorithm.shortestpath.ShortestPathSolution;
+import org.insa.graphs.model.Arc;
 import org.insa.graphs.model.Graph;
 import org.insa.graphs.model.Node;
 import org.insa.graphs.model.Path;
@@ -260,47 +262,64 @@ public class DjikstraTest {
 	            destReunion = nodesReunion.get(atRandom.nextInt(nodesCarre.size()));
 	        } while (origCarre == destCarre || origInsa == destInsa || origReunion == destReunion);
 	        
-	        ArcInspector arcInspector2 = arcInspectors[1];
-	        ShortestPathData dataCarre2 = new ShortestPathData(carre, origCarre, destCarre, arcInspector2);
-            ShortestPathSolution solCarre2 = new DijkstraAlgorithm(dataCarre2).doRun();
-            Path path2 = new Path(carre, origCarre);
-            Path carrePath2 = new Path(carre, path2.getArcs());
-            Path solCarrePath2 = Path.createShortestPathFromNodes(carrePath2.getGraph(), carrePath2.getGraph().getNodes());
-            if (solCarre2.getPath() == solCarrePath2) {
-            	assertTrue(solCarre2.getPath().isValid());
-            }
+
 	        
 	        for (ArcInspector arcInspector : arcInspectors) {
 	        	//carre
 	            ShortestPathData dataCarre = new ShortestPathData(carre, origCarre, destCarre, arcInspector);
 	            ShortestPathSolution solCarre = new DijkstraAlgorithm(dataCarre).doRun();
-	            Path path = new Path(carre, origCarre);
-	            Path carrePath = new Path(carre, path.getArcs());
+	            List<Node> pathNodesCarre = new ArrayList<Node>();
+	            for (Arc arc : solCarre.getPath().getArcs()) {
+	            	pathNodesCarre.add(arc.getOrigin());
+	            }
+	            int lastIndexCarre = solCarre.getPath().getArcs().size();
+	            pathNodesCarre.add(solCarre.getPath().getArcs().get(lastIndexCarre-1).getDestination());
 	            Path solCarrePath;
-	            if (arcInspector == arcInspectors[1]) {
-	            	solCarrePath = Path.createShortestPathFromNodes(carrePath.getGraph(), carrePath.getGraph().getNodes());
+	            if (arcInspector == arcInspectors[0]) {
+	            	solCarrePath = Path.createShortestPathFromNodes(carre, pathNodesCarre);
 	            } else {
-	            	solCarrePath = Path.createFastestPathFromNodes(carrePath.getGraph(), carrePath.getGraph().getNodes());
+	            	solCarrePath = Path.createFastestPathFromNodes(carre, pathNodesCarre);
 	            }
 	            if (solCarre.getPath() == solCarrePath) {
 	            	assertTrue(solCarre.getPath().isValid());
 	            }
 	            
+	            //reunion
+	            ShortestPathData dataReunion = new ShortestPathData(reunion, origReunion, destReunion, arcInspector);
+	            ShortestPathSolution solReunion = new DijkstraAlgorithm(dataReunion).doRun();
+	            List<Node> pathNodesReunion = new ArrayList<Node>();
+	            for (Arc arc : solReunion.getPath().getArcs()) {
+	            	pathNodesReunion.add(arc.getOrigin());
+	            }
+	            int lastIndexReunion = solReunion.getPath().getArcs().size();
+	            pathNodesReunion.add(solReunion.getPath().getArcs().get(lastIndexReunion-1).getDestination());
+	            Path solReunionPath;
+	            if (arcInspector == arcInspectors[0]) {
+	            	solReunionPath = Path.createShortestPathFromNodes(reunion, pathNodesReunion);
+	            } else {
+	            	solReunionPath = Path.createFastestPathFromNodes(reunion, pathNodesReunion);
+	            }
+	            if (solReunion.getPath() == solReunionPath) {
+	            	assertTrue(solReunion.getPath().isValid());
+	            }
+	            
 	            //insa
 	            ShortestPathData dataInsa = new ShortestPathData(insa, origInsa, destInsa, arcInspector);
 	            ShortestPathSolution solInsa = new DijkstraAlgorithm(dataInsa).doRun();
-	            Path solInsaPath = Path.createFastestPathFromNodes(insa, nodesInsa);
+	            List<Node> pathNodesInsa = new ArrayList<Node>();
+	            for (Arc arc : solInsa.getPath().getArcs()) {
+	            	pathNodesInsa.add(arc.getOrigin());
+	            }
+	            int lastIndexInsa = solInsa.getPath().getArcs().size();
+	            pathNodesInsa.add(solInsa.getPath().getArcs().get(lastIndexInsa-1).getDestination());
+	            Path solInsaPath;
+	            if (arcInspector == arcInspectors[0]) {
+	            	solInsaPath = Path.createShortestPathFromNodes(insa, pathNodesInsa);
+	            } else {
+	            	solInsaPath = Path.createFastestPathFromNodes(insa, pathNodesInsa);
+	            }
 	            if (solInsa.getPath() == solInsaPath) {
 	            	assertTrue(solInsa.getPath().isValid());
-	            }
-	            
-	            //reunion
-	            
-	            ShortestPathData dataReunion = new ShortestPathData(reunion, origReunion, destReunion, arcInspector);
-	            ShortestPathSolution solReunion = new DijkstraAlgorithm(dataReunion).doRun();
-	            Path solReunionPath = Path.createFastestPathFromNodes(reunion, nodesInsa);
-	            if (solReunion.getPath() == solReunionPath) {
-	            	assertTrue(solReunion.getPath().isValid());
 	            }
 	                
 	        }
