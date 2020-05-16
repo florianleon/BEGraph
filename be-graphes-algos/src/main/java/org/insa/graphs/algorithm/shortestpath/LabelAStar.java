@@ -23,18 +23,18 @@ public class LabelAStar extends Label {
     }
     
     public double getEstimatedCost() {
-        return estimatedCost;
+        return this.estimatedCost;
     }
     
-    
+    @Override
     public double getTotalCost() {
         return this.getCost() + this.getEstimatedCost();
     }
     
-    
-    public int compareTo(LabelAStar other) {
-        return Double.compare(this.getTotalCost(), other.getTotalCost());
-    }
+    public int compareTo(LabelAStar label) {
+    	//return Double.compare(this.getTotalCost(), label.getTotalCost());
+    	return Double.compare(this.getEstimatedCost(), label.getTotalCost() - label.getCost());
+	}
     
     
 

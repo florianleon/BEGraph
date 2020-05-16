@@ -16,7 +16,7 @@ public class Label implements Comparable<Label>{
 	//booléen, vrai lorsque le coût min de ce sommet est définitivement connu par l'algorithme
 	private boolean marked;
 	//valeur courante du plus court chemin depuis l'origine vers le sommet
-	private double cost;
+	protected double cost;
 	//correspond au sommet précédent sur le chemin correspondant au plus court chemin courant
 	/*
 	*private Node pere;
@@ -59,6 +59,13 @@ public class Label implements Comparable<Label>{
     }
     
     /**
+     * @return le coût total du label
+     */
+    public double getTotalCost() {
+        return this.getCost();
+    }
+    
+    /**
      * 
      */
     public void setMarked() {
@@ -92,7 +99,7 @@ public class Label implements Comparable<Label>{
     
     @Override
     public int compareTo(Label label) {
-        return Double.compare(this.cost, label.getCost()) ;
+        return Double.compare(this.getTotalCost(), label.getTotalCost()) ;
     }
     
 	
