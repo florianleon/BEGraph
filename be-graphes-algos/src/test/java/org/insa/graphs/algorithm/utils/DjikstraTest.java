@@ -56,7 +56,7 @@ public class DjikstraTest {
 	private Graph carre;
     private Graph insa;
     private Graph reunion;
-    //je sais pas comment les créer pour l'instant
+    private Graph HG;
     
     private Graph readGraph(String path) throws IOException {
     	try (GraphReader reader = new BinaryGraphReader(new DataInputStream(
@@ -69,6 +69,7 @@ public class DjikstraTest {
         this.carre = readGraph("/Users/florianleon/Desktop/Cartes/carre.mapgr");
         this.insa = readGraph("/Users/florianleon/Desktop/Cartes/insa.mapgr");
         this.reunion = readGraph("/Users/florianleon/Desktop/Cartes/reunion.mapgr");
+        this.HG = readGraph("/Users/florianleon/Desktop/Cartes/haute-garonne.mapgr");
     }
     
 
@@ -90,6 +91,7 @@ public class DjikstraTest {
 	        List<Node> nodesReunion = reunion.getNodes();
 	        Node origReunion;
 	        Node destReunion;
+	        
 	        //pour pouvoir prendre un node au hasard la liste (ça marche pas sans…)
 	        Random atRandom = new Random();
 	        
@@ -97,15 +99,15 @@ public class DjikstraTest {
 	    	 * On teste des chemins au hasard
 	    	 */
 	        origCarre = nodesCarre.get(atRandom.nextInt(nodesCarre.size()));
-	        origInsa = nodesInsa.get(atRandom.nextInt(nodesCarre.size()));
-	        origReunion = nodesReunion.get(atRandom.nextInt(nodesCarre.size()));
+	        origInsa = nodesInsa.get(atRandom.nextInt(nodesInsa.size()));
+	        origReunion = nodesReunion.get(atRandom.nextInt(nodesReunion.size()));
 	        
 	        //c'est rare mais ça peut arriver mais c'est "rare" que orig = dest
 	        //alors on utilise un do while
 	        do {
-	        	destCarre = nodesCarre.get(atRandom.nextInt(nodesCarre.size()));
-	            destInsa = nodesInsa.get(atRandom.nextInt(nodesCarre.size()));
-	            destReunion = nodesReunion.get(atRandom.nextInt(nodesCarre.size()));
+	        	destCarre = nodesCarre.get(atRandom.nextInt(nodesCarre.size())-1);
+	            destInsa = nodesInsa.get(atRandom.nextInt(nodesCarre.size())-1);
+	            destReunion = nodesReunion.get(atRandom.nextInt(nodesCarre.size())-1);
 	        } while (origCarre == destCarre || origInsa == destInsa || origReunion == destReunion);
 	        
 	        for (ArcInspector arcInspector : arcInspectors) {
@@ -176,6 +178,9 @@ public class DjikstraTest {
 	        List<Node> nodesReunion = reunion.getNodes();
 	        Node origReunion;
 	        Node destReunion;
+	        List<Node> nodesHG = HG.getNodes();
+	        Node origHG;
+	        Node destHG;
 	        //pour pouvoir prendre un node au hasard la liste (ça marche pas sans…)
 	        Random atRandom = new Random();
 	        
@@ -183,42 +188,90 @@ public class DjikstraTest {
 	    	 * On teste des chemins au hasard
 	    	 */
 	        origCarre = nodesCarre.get(atRandom.nextInt(nodesCarre.size()));
-	        origInsa = nodesInsa.get(atRandom.nextInt(nodesCarre.size()));
-	        origReunion = nodesReunion.get(atRandom.nextInt(nodesCarre.size()));
+	        origInsa = nodesInsa.get(atRandom.nextInt(nodesInsa.size()));
+	        origReunion = nodesReunion.get(atRandom.nextInt(nodesReunion.size()));
+	        origHG = nodesHG.get(atRandom.nextInt(nodesHG.size()));
 	        
 	        //c'est rare mais ça peut arriver mais c'est "rare" que orig = dest
 	        //alors on utilise un do while
 	        do {
-	        	destCarre = nodesCarre.get(atRandom.nextInt(nodesCarre.size()));
-	            destInsa = nodesInsa.get(atRandom.nextInt(nodesCarre.size()));
-	            destReunion = nodesReunion.get(atRandom.nextInt(nodesCarre.size()));
-	        } while (origCarre == destCarre || origInsa == destInsa || origReunion == destReunion);
+	        	destCarre = nodesCarre.get(atRandom.nextInt(nodesCarre.size())-1);
+	            destInsa = nodesInsa.get(atRandom.nextInt(nodesInsa.size())-1);
+	            destReunion = nodesReunion.get(atRandom.nextInt(nodesReunion.size())-1);
+	            destHG = nodesHG.get(atRandom.nextInt(nodesHG.size())-1);
+	        } while (origCarre == destCarre || origInsa == destInsa || origReunion == destReunion  || origHG == destHG);
 	        
 	        for (ArcInspector arcInspector : arcInspectors) {
 	        	//carre
 	            ShortestPathData dataCarre = new ShortestPathData(carre, origCarre, destCarre, arcInspector);
+	            long lStartTimeDijkstra = System.currentTimeMillis();
 	            ShortestPathSolution solCarre = new DijkstraAlgorithm(dataCarre).doRun();
+	            long lEndTimeDijkstra = System.currentTimeMillis();
+	            long outputDijkstra = lEndTimeDijkstra - lStartTimeDijkstra;
+	            long lStartTimeBellman = System.currentTimeMillis();
 	            ShortestPathSolution solCarreBellman = new BellmanFordAlgorithm(dataCarre).doRun();
+	            long lEndTimeBellman = System.currentTimeMillis();
+	            long outputBellman = lEndTimeBellman - lStartTimeBellman;
 	            if (solCarre == solCarreBellman) {
 	            	assertTrue(solCarre.getPath().isValid());
 	            }
+	            System.out.println("Carré : " + arcInspector + "\n");
+	            System.out.println("Djikstra: " + outputDijkstra + " ms \n");
+	            System.out.println("Bellman: " + outputBellman + " ms \n");
+	            System.out.println('\n');
 	            
 	            //insa
 	            ShortestPathData dataInsa = new ShortestPathData(insa, origInsa, destInsa, arcInspector);
+	            lStartTimeDijkstra = System.currentTimeMillis();
 	            ShortestPathSolution solInsa = new DijkstraAlgorithm(dataInsa).doRun();
+	            lEndTimeDijkstra = System.currentTimeMillis();
+	            outputDijkstra = lEndTimeDijkstra - lStartTimeDijkstra;
 	            ShortestPathSolution solInsaBellman = new BellmanFordAlgorithm(dataInsa).doRun();
+	            lEndTimeBellman = System.currentTimeMillis();
+	            outputBellman = lEndTimeBellman - lStartTimeBellman;
 	            if (solInsa == solInsaBellman) {
 	            	assertTrue(solInsa.getPath().isValid());
 	            }
+	            System.out.println("Insa : " + arcInspector + "\n");
+	            System.out.println("Djikstra: " + outputDijkstra + " ms \n");
+	            System.out.println("Bellman: " + outputBellman + " ms \n");
+	            System.out.println('\n');
 	            
 	            //reunion
 	            
 	            ShortestPathData dataReunion = new ShortestPathData(reunion, origReunion, destReunion, arcInspector);
+	            lStartTimeDijkstra = System.currentTimeMillis();
 	            ShortestPathSolution solReunion = new DijkstraAlgorithm(dataReunion).doRun();
+	            lEndTimeDijkstra = System.currentTimeMillis();
+	            outputDijkstra = lEndTimeDijkstra - lStartTimeDijkstra;
 	            ShortestPathSolution solReunionBellman = new BellmanFordAlgorithm(dataReunion).doRun();
+	            lEndTimeBellman = System.currentTimeMillis();
+	            outputBellman = lEndTimeBellman - lStartTimeBellman;
 	            if (solReunion == solReunionBellman) {
 	            	assertTrue(solReunion.getPath().isValid());
 	            }
+	            System.out.println("Reunion :" + arcInspector + "\n");
+	            System.out.println("Djikstra: " + outputDijkstra + " ms \n");
+	            System.out.println("Bellman: " + outputBellman + " ms \n");
+	            System.out.println('\n');
+	            
+	            //haute-Garonne
+	            
+	            ShortestPathData dataHG = new ShortestPathData(HG, origHG, destHG, arcInspector);
+	            lStartTimeDijkstra = System.currentTimeMillis();
+	            ShortestPathSolution solHG = new DijkstraAlgorithm(dataHG).doRun();
+	            lEndTimeDijkstra = System.currentTimeMillis();
+	            outputDijkstra = lEndTimeDijkstra - lStartTimeDijkstra;
+	            ShortestPathSolution solHGBellman = new BellmanFordAlgorithm(dataHG).doRun();
+	            lEndTimeBellman = System.currentTimeMillis();
+	            outputBellman = lEndTimeBellman - lStartTimeBellman;
+	            if (solHG == solHGBellman) {
+	            	assertTrue(solHG.getPath().isValid());
+	            }
+	            System.out.println("Haute-Garonne : " + arcInspector + "\n");
+	            System.out.println("Djikstra: " + outputDijkstra + " ms \n");
+	            System.out.println("Bellman: " + outputBellman + " ms \n");
+	            System.out.println('\n');
 	                
 	        }
 
@@ -251,15 +304,15 @@ public class DjikstraTest {
 	    	 * On teste des chemins au hasard
 	    	 */
 	        origCarre = nodesCarre.get(atRandom.nextInt(nodesCarre.size()));
-	        origInsa = nodesInsa.get(atRandom.nextInt(nodesCarre.size()));
-	        origReunion = nodesReunion.get(atRandom.nextInt(nodesCarre.size()));
+	        origInsa = nodesInsa.get(atRandom.nextInt(nodesInsa.size()));
+	        origReunion = nodesReunion.get(atRandom.nextInt(nodesReunion.size()));
 	        
 	        //c'est rare mais ça peut arriver mais c'est "rare" que orig = dest
 	        //alors on utilise un do while
 	        do {
 	        	destCarre = nodesCarre.get(atRandom.nextInt(nodesCarre.size()));
-	            destInsa = nodesInsa.get(atRandom.nextInt(nodesCarre.size()));
-	            destReunion = nodesReunion.get(atRandom.nextInt(nodesCarre.size()));
+	            destInsa = nodesInsa.get(atRandom.nextInt(nodesInsa.size()));
+	            destReunion = nodesReunion.get(atRandom.nextInt(nodesReunion.size()));
 	        } while (origCarre == destCarre || origInsa == destInsa || origReunion == destReunion);
 	        
 

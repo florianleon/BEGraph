@@ -57,6 +57,7 @@ public class AStarTest {
 	private Graph carre;
     private Graph insa;
     private Graph reunion;
+    private Graph HG;
     //je sais pas comment les créer pour l'instant
     
     private Graph readGraph(String path) throws IOException {
@@ -70,6 +71,7 @@ public class AStarTest {
         this.carre = readGraph("/Users/florianleon/Desktop/Cartes/carre.mapgr");
         this.insa = readGraph("/Users/florianleon/Desktop/Cartes/insa.mapgr");
         this.reunion = readGraph("/Users/florianleon/Desktop/Cartes/reunion.mapgr");
+        this.HG = readGraph("/Users/florianleon/Desktop/Cartes/haute-garonne.mapgr");
     }
     
 	
@@ -94,15 +96,15 @@ public class AStarTest {
 	    	 * On teste des chemins au hasard
 	    	 */
 	        origCarre = nodesCarre.get(atRandom.nextInt(nodesCarre.size()));
-	        origInsa = nodesInsa.get(atRandom.nextInt(nodesCarre.size()));
-	        origReunion = nodesReunion.get(atRandom.nextInt(nodesCarre.size()));
+	        origInsa = nodesInsa.get(atRandom.nextInt(nodesInsa.size()));
+	        origReunion = nodesReunion.get(atRandom.nextInt(nodesReunion.size()));
 	        
 	        //c'est rare mais ça peut arriver mais c'est "rare" que orig = dest
 	        //alors on utilise un do while
 	        do {
 	        	destCarre = nodesCarre.get(atRandom.nextInt(nodesCarre.size())-1);
-	            destInsa = nodesInsa.get(atRandom.nextInt(nodesCarre.size())-1);
-	            destReunion = nodesReunion.get(atRandom.nextInt(nodesCarre.size())-1);
+	            destInsa = nodesInsa.get(atRandom.nextInt(nodesInsa.size())-1);
+	            destReunion = nodesReunion.get(atRandom.nextInt(nodesReunion.size())-1);
 	        } while (origCarre == destCarre || origInsa == destInsa || origReunion == destReunion);
 	        
 	        for (ArcInspector arcInspector : arcInspectors) {
@@ -168,6 +170,9 @@ public class AStarTest {
 	        List<Node> nodesReunion = reunion.getNodes();
 	        Node origReunion;
 	        Node destReunion;
+	        List<Node> nodesHG = HG.getNodes();
+	        Node origHG;
+	        Node destHG;
 	        //pour pouvoir prendre un node au hasard la liste (ça marche pas sans…)
 	        Random atRandom = new Random();
 	        
@@ -175,43 +180,92 @@ public class AStarTest {
 	    	 * On teste des chemins au hasard
 	    	 */
 	        origCarre = nodesCarre.get(atRandom.nextInt(nodesCarre.size()));
-	        origInsa = nodesInsa.get(atRandom.nextInt(nodesCarre.size()));
-	        origReunion = nodesReunion.get(atRandom.nextInt(nodesCarre.size()));
+	        origInsa = nodesInsa.get(atRandom.nextInt(nodesInsa.size()));
+	        origReunion = nodesReunion.get(atRandom.nextInt(nodesReunion.size()));
+	        origHG = nodesHG.get(atRandom.nextInt(nodesHG.size()));
 	        
 	        //c'est rare mais ça peut arriver mais c'est "rare" que orig = dest
 	        //alors on utilise un do while
 	        do {
-	        	destCarre = nodesCarre.get(atRandom.nextInt(nodesCarre.size()));
-	            destInsa = nodesInsa.get(atRandom.nextInt(nodesCarre.size()));
-	            destReunion = nodesReunion.get(atRandom.nextInt(nodesCarre.size()));
-	        } while (origCarre == destCarre || origInsa == destInsa || origReunion == destReunion);
+	        	destCarre = nodesCarre.get(atRandom.nextInt(nodesCarre.size())-1);
+	            destInsa = nodesInsa.get(atRandom.nextInt(nodesInsa.size())-1);
+	            destReunion = nodesReunion.get(atRandom.nextInt(nodesReunion.size())-1);
+	            destHG = nodesHG.get(atRandom.nextInt(nodesHG.size())-1);
+	        } while (origCarre == destCarre || origInsa == destInsa || origReunion == destReunion  || origHG == destHG);
 	        
 	        for (ArcInspector arcInspector : arcInspectors) {
 	        	//carre
 	            ShortestPathData dataCarre = new ShortestPathData(carre, origCarre, destCarre, arcInspector);
+	            long lStartTimeAStar = System.currentTimeMillis();
 	            ShortestPathSolution solCarre = new AStarAlgorithm(dataCarre).doRun();
+	            long lEndTimeAStar = System.currentTimeMillis();
+	            long outputAStar = lEndTimeAStar - lStartTimeAStar;
+	            long lStartTimeBellman = System.currentTimeMillis();
 	            ShortestPathSolution solCarreBellman = new BellmanFordAlgorithm(dataCarre).doRun();
+	            long lEndTimeBellman = System.currentTimeMillis();
+	            long outputBellman = lEndTimeBellman - lStartTimeBellman;
 	            if (solCarre == solCarreBellman) {
 	            	assertTrue(solCarre.getPath().isValid());
 	            }
+	            System.out.println("Carré : " + arcInspector + "\n");
+	            System.out.println("AStar: " + outputAStar + " ms \n");
+	            System.out.println("Bellman: " + outputBellman + " ms \n");
+	            System.out.println('\n');
 	            
 	            //insa
 	            ShortestPathData dataInsa = new ShortestPathData(insa, origInsa, destInsa, arcInspector);
+	            lStartTimeAStar = System.currentTimeMillis();
 	            ShortestPathSolution solInsa = new AStarAlgorithm(dataInsa).doRun();
+	            lEndTimeAStar = System.currentTimeMillis();
+	            outputAStar = lEndTimeAStar - lStartTimeAStar;
+	            lStartTimeBellman = System.currentTimeMillis();
 	            ShortestPathSolution solInsaBellman = new BellmanFordAlgorithm(dataInsa).doRun();
+	            lEndTimeBellman = System.currentTimeMillis();
+	            outputBellman = lEndTimeBellman - lStartTimeBellman;
 	            if (solInsa == solInsaBellman) {
 	            	assertTrue(solInsa.getPath().isValid());
 	            }
+	            System.out.println("Insa : " + arcInspector + "\n");
+	            System.out.println("AStar: " + outputAStar + " ms \n");
+	            System.out.println("Bellman: " + outputBellman + " ms \n");
+	            System.out.println('\n');
 	            
 	            //reunion
 	            
 	            ShortestPathData dataReunion = new ShortestPathData(reunion, origReunion, destReunion, arcInspector);
+	            lStartTimeAStar = System.currentTimeMillis();
 	            ShortestPathSolution solReunion = new AStarAlgorithm(dataReunion).doRun();
+	            lEndTimeAStar = System.currentTimeMillis();
+	            outputAStar = lEndTimeAStar - lStartTimeAStar;
+	            lStartTimeBellman = System.currentTimeMillis();
 	            ShortestPathSolution solReunionBellman = new BellmanFordAlgorithm(dataReunion).doRun();
+	            lEndTimeBellman = System.currentTimeMillis();
+	            outputBellman = lEndTimeBellman - lStartTimeBellman;
 	            if (solReunion == solReunionBellman) {
 	            	assertTrue(solReunion.getPath().isValid());
 	            }
+	            System.out.println("Reunion : " + arcInspector + "\n");
+	            System.out.println("AStar: " + outputAStar + " ms \n");
+	            System.out.println("Bellman: " + outputBellman + " ms \n");
+	            System.out.println('\n');
 	                
+	            //haute-Garonne
+	            
+	            ShortestPathData dataHG = new ShortestPathData(HG, origHG, destHG, arcInspector);
+	            lStartTimeAStar = System.currentTimeMillis();
+	            ShortestPathSolution solHG = new AStarAlgorithm(dataHG).doRun();
+	            lEndTimeAStar = System.currentTimeMillis();
+	            outputAStar = lEndTimeAStar - lStartTimeAStar;
+	            ShortestPathSolution solHGBellman = new BellmanFordAlgorithm(dataHG).doRun();
+	            lEndTimeBellman = System.currentTimeMillis();
+	            outputBellman = lEndTimeBellman - lStartTimeBellman;
+	            if (solHG == solHGBellman) {
+	            	assertTrue(solHG.getPath().isValid());
+	            }
+	            System.out.println("Haute-Garonne : " + arcInspector + "\n");
+	            System.out.println("AStar: " + outputAStar + " ms \n");
+	            System.out.println("Bellman: " + outputBellman + " ms \n");
+	            System.out.println('\n');
 	        }
 
         } catch (IOException e) {
@@ -225,7 +279,7 @@ public class AStarTest {
     public void testDijkstra() {
         try {
 			initGraphs();
-		
+			System.out.println("\n *********************************************** \n");
 	        List<Node> nodesCarre = carre.getNodes();
 	        Node origCarre;
 	        Node destCarre;
@@ -235,6 +289,9 @@ public class AStarTest {
 	        List<Node> nodesReunion = reunion.getNodes();
 	        Node origReunion;
 	        Node destReunion;
+	        List<Node> nodesHG = HG.getNodes();
+	        Node origHG;
+	        Node destHG;
 	        //pour pouvoir prendre un node au hasard la liste (ça marche pas sans…)
 	        Random atRandom = new Random();
 	        
@@ -242,42 +299,91 @@ public class AStarTest {
 	    	 * On teste des chemins au hasard
 	    	 */
 	        origCarre = nodesCarre.get(atRandom.nextInt(nodesCarre.size()));
-	        origInsa = nodesInsa.get(atRandom.nextInt(nodesCarre.size()));
-	        origReunion = nodesReunion.get(atRandom.nextInt(nodesCarre.size()));
+	        origInsa = nodesInsa.get(atRandom.nextInt(nodesInsa.size()));
+	        origReunion = nodesReunion.get(atRandom.nextInt(nodesReunion.size()));
+	        origHG = nodesHG.get(atRandom.nextInt(nodesHG.size()));
 	        
 	        //c'est rare mais ça peut arriver mais c'est "rare" que orig = dest
 	        //alors on utilise un do while
 	        do {
-	        	destCarre = nodesCarre.get(atRandom.nextInt(nodesCarre.size()));
-	            destInsa = nodesInsa.get(atRandom.nextInt(nodesCarre.size()));
-	            destReunion = nodesReunion.get(atRandom.nextInt(nodesCarre.size()));
-	        } while (origCarre == destCarre || origInsa == destInsa || origReunion == destReunion);
+	        	destCarre = nodesCarre.get(atRandom.nextInt(nodesCarre.size())-1);
+	            destInsa = nodesInsa.get(atRandom.nextInt(nodesInsa.size())-1);
+	            destReunion = nodesReunion.get(atRandom.nextInt(nodesReunion.size())-1);
+	            destHG = nodesHG.get(atRandom.nextInt(nodesHG.size())-1);
+	        } while (origCarre == destCarre || origInsa == destInsa || origReunion == destReunion  || origHG == destHG);
 	        
 	        for (ArcInspector arcInspector : arcInspectors) {
 	        	//carre
 	            ShortestPathData dataCarre = new ShortestPathData(carre, origCarre, destCarre, arcInspector);
+	            long lStartTimeAStar = System.currentTimeMillis();
 	            ShortestPathSolution solCarre = new AStarAlgorithm(dataCarre).doRun();
+	            long lEndTimeAStar = System.currentTimeMillis();
+	            long outputAStar = lEndTimeAStar - lStartTimeAStar;
+	            long lStartTimeDijkstra = System.currentTimeMillis();
 	            ShortestPathSolution solCarreDijkstra = new DijkstraAlgorithm(dataCarre).doRun();
+	            long lEndTimeDijkstra = System.currentTimeMillis();
+	            long outputDijkstra = lEndTimeDijkstra - lStartTimeDijkstra;
 	            if (solCarre == solCarreDijkstra) {
 	            	assertTrue(solCarre.getPath().isValid());
 	            }
+	            System.out.println("Carre : " + arcInspector + "\n");
+	            System.out.println("AStar: " + outputAStar + " ms \n");
+	            System.out.println("Dijkstra: " + outputDijkstra + " ms \n");
+	            System.out.println('\n');
 	            
 	            //insa
 	            ShortestPathData dataInsa = new ShortestPathData(insa, origInsa, destInsa, arcInspector);
+	            lStartTimeAStar = System.currentTimeMillis();
 	            ShortestPathSolution solInsa = new AStarAlgorithm(dataInsa).doRun();
+	            lEndTimeAStar = System.currentTimeMillis();
+	            outputAStar = lEndTimeAStar - lStartTimeAStar;
+	            lStartTimeDijkstra = System.currentTimeMillis();
 	            ShortestPathSolution solInsaDijkstra = new DijkstraAlgorithm(dataInsa).doRun();
+	            lEndTimeDijkstra = System.currentTimeMillis();
+	            outputDijkstra = lEndTimeDijkstra - lStartTimeDijkstra;
 	            if (solInsa == solInsaDijkstra) {
 	            	assertTrue(solInsa.getPath().isValid());
 	            }
-	            
+	            System.out.println("Insa : " + arcInspector + "\n");
+	            System.out.println("AStar: " + outputAStar + " ms \n");
+	            System.out.println("Dijkstra: " + outputDijkstra + " ms \n");
+	            System.out.println('\n');
 	            //reunion
 	            
 	            ShortestPathData dataReunion = new ShortestPathData(reunion, origReunion, destReunion, arcInspector);
+	            lStartTimeAStar = System.currentTimeMillis();
 	            ShortestPathSolution solReunion = new AStarAlgorithm(dataReunion).doRun();
+	            lEndTimeAStar = System.currentTimeMillis();
+	            outputAStar = lEndTimeAStar - lStartTimeAStar;
+	            lStartTimeDijkstra = System.currentTimeMillis();
 	            ShortestPathSolution solReunionDijkstra = new DijkstraAlgorithm(dataReunion).doRun();
+	            lEndTimeDijkstra = System.currentTimeMillis();
+	            outputDijkstra = lEndTimeDijkstra - lStartTimeDijkstra;
 	            if (solReunion == solReunionDijkstra) {
 	            	assertTrue(solReunion.getPath().isValid());
 	            }
+	            System.out.println("Reunion : " + arcInspector + "\n");
+	            System.out.println("AStar: " + outputAStar + " ms \n");
+	            System.out.println("Dijkstra: " + outputDijkstra + " ms \n");
+	            System.out.println('\n');
+	            
+	            //haute-Garonne
+	            
+	            ShortestPathData dataHG = new ShortestPathData(HG, origHG, destHG, arcInspector);
+	            lStartTimeAStar = System.currentTimeMillis();
+	            ShortestPathSolution solHG = new AStarAlgorithm(dataHG).doRun();
+	            lEndTimeAStar = System.currentTimeMillis();
+	            outputAStar = lEndTimeAStar - lStartTimeAStar;
+	            ShortestPathSolution solHGDijkstra = new DijkstraAlgorithm(dataHG).doRun();
+	            lEndTimeDijkstra = System.currentTimeMillis();
+	            outputDijkstra = lEndTimeDijkstra - lStartTimeDijkstra;
+	            if (solHG == solHGDijkstra) {
+	            	assertTrue(solHG.getPath().isValid());
+	            }
+	            System.out.println("Haute-Garonne : " + arcInspector + "\n");
+	            System.out.println("AStar: " + outputAStar + " ms \n");
+	            System.out.println("Dijkstra: " + outputDijkstra + " ms \n");
+	            System.out.println('\n');
 	                
 	        }
 
